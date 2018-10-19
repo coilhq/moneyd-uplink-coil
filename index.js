@@ -44,17 +44,22 @@ async function configure ({ advanced }) {
     process.exit(1)
   }
 
+  const currency = response.data.data.login.user.currencyPreferences
+  const assetCode = currency ? currency.code : 'USD'
+  const assetScale = currency ? currency.scale : 9
+
   console.log('logged in successfully.')
+  console.log('run `moneyd coil:start` to connect to Interledger.')
   return {
     relation: 'parent',
-    plugin: require.resolve('ilp-plugin-btp'),
-    assetCode: 'XRP',
-    assetScale: 9,
+    plugin: require.resolve('ilp-plugin-btp-coil'),
+    assetCode,
+    assetScale,
     sendRoutes: false,
     receiveRoutes: false,
     options: {
       assetScale: 9,
-      btpToken: response.data.data.login.token,
+      coilToken: response.data.data.login.token,
       server
     }
   }
